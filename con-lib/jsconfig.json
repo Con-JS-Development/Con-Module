@@ -3,5 +3,8 @@
         "target": "ESNext",
         "module": "es2022",
     },
-    "files": ["index.js"]
+    "files": [
+        "index.js",
+        "con-terminal.js"
+    ]
 }
