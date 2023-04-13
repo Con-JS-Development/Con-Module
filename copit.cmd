@@ -1,4 +1,4 @@
 :A
 regolith run
-timeout 15
+timeout 30
 goto A
