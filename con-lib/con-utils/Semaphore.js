@@ -1,6 +1,5 @@
 /**
  * An implementation of an asynchronous semaphore that implements the PromiseLike interface.
- * @implements {PromiseLike<number>}
  */
 export class AsyncSemaphore {
     #promise;
@@ -56,7 +55,7 @@ export class AsyncSemaphore {
     }
     /**
      * Attaches a callback for when a lock is acquired. This allows the `AsyncSemaphore` instance to be used as a `PromiseLike` object.
-     * @type {Promise['then']} - Returns a promise that resolves with the result of the callback.
+     * @type {Promise<number>['then']} - Returns a promise that resolves with the result of the callback.
      */
     get then() {
         const promise = this.lock();
