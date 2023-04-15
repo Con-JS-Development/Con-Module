@@ -5,12 +5,12 @@ This documentation describes the `ScoreboardDB`, `AsyncDatabase`, and `Scoreboar
 
 ## Internal ScoreboardDB
 
-`ScoreboardDB` is a class that extends `Map` and provides an interface to interact with a scoreboard objective in Minecraft. It allows you to store key-value pairs in a scoreboard objective and retrieve them later.
+`ScoreboardDB` is a class that extends [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) and provides an interface to interact with a scoreboard objective in Minecraft. It allows you to store key-value pairs in a scoreboard objective and retrieve them later.
 
-### Constructor
+### Create
 
 ```js
-new ScoreboardDB(objective: string | ScoreboardObjective, createNew?: boolean);
+ScoreboardDB.create(objective: string | ScoreboardObjective, createNew?: boolean);
 ```
 
 Creates a new `ScoreboardDB` instance.
