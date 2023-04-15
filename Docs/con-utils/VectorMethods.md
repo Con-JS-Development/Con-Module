@@ -171,25 +171,25 @@ Calculates the linear interpolation between two vectors.
 
 (Vector3): The interpolated vector.
 
-### `rotateVector(vector, axis, angle)`
+### `rotateVector(a, b, angle)`
 
 Rotates a vector around an axis by a given angle.
 
 **Parameters:**
-- `vector`: The vector to rotate. Must have x, y, and z properties.
-- `axis`: The axis to rotate around. Must have x, y, and z properties.
+- `a`: The Vector3 to rotate. Must have x, y, and z properties.
+- `b`: The Vector3 axis to rotate around. Must have x, y, and z properties.
 - `angle`: The angle in radians to rotate by.
 
 **Returns:**
 A new Vector3 representing the result of the rotation.
 
-### `rotateVectorOntoVector(vector, targetVector)`
+### `rotateVectorOntoVector(a, b)`
 
 Rotates a vector so that it "lands" on another vector.
 
 **Parameters:**
-- `vector`: The vector to rotate. Must have x, y, and z properties.
-- `targetVector`: The vector to rotate onto. Must have x, y, and z properties.
+- `a`: The vector to rotate. Must have x, y, and z properties.
+- `b`: The vector to rotate onto. Must have x, y, and z properties.
 
 **Returns:**
 A new Vector3 representing the result of the rotation.

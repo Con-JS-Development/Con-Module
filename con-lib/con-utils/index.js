@@ -5,3 +5,4 @@ export * from './Semaphore.js';
 export * from './uuid.js';
 export * from './vectors.js';
 export * from './TextStream.js';
+export * from './ScoreboardDatabase.js';
