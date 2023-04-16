@@ -1,6 +1,11 @@
 declare global{
     var nextTick: Promise<number>;
     var currentTick: number;
+    var GeneratorFunction: GeneratorFunction;
+    var GeneratorFunctionConstructor: GeneratorFunctionConstructor;
+    var AsyncGeneratorFunction: AsyncGeneratorFunction;
+    var AsyncGeneratorFunctionConstructor: AsyncGeneratorFunctionConstructor;
+    var AsyncFunctionConstructor: AsyncFunctionConstructor;
     interface SymbolConstructor{
         readonly isGenerator: Symbol
         readonly isAsyncGenerator: Symbol
@@ -174,4 +179,4 @@ export const GeneratorFunctionConstructor: GeneratorFunctionConstructor;
 export const AsyncGenerator: AsyncGenerator;
 export const AsyncGeneratorFunction: AsyncGeneratorFunction;
 export const AsyncGeneratorFunctionConstructor: AsyncGeneratorFunctionConstructor;
-export const AsyncFunction: AsyncFunction
+export const AsyncFunctionConstructor: AsyncFunctionConstructor

@@ -10,7 +10,8 @@ const {
     AsyncGenerator,
     AsyncFunctionConstructor
 } = Gen;
-
+globalThis[Symbol.toStringTag] = "GlobalThis";
+globalThis.console[Symbol.toStringTag] = "Console";
 Object.assign(Function.prototype, {
     [Symbol.runnable](){return this;}
 });
