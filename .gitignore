@@ -1,7 +1,5 @@
 /build
 /.regolith
-/config.json
-/package.json
 /package-lock.json
 /packs
 /filters

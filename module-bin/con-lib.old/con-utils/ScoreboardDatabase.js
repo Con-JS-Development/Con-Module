@@ -18,57 +18,49 @@ class ScoreboardDB extends Map {
     /**
      * Opens a scoreboard objective and returns a ScoreboardDB instance.
      * @param {string|ScoreboardObjective} objective - The scoreboard objective to open.
+     * @param {boolean} createNewObjective - Create new Scoreboard when there is no scoreboard for given id.
      * @returns {ScoreboardDB} The this instance.
      * @static
      */
-    static open(objective) {
-        if (typeof objective == "string") {
-        let get = scoreboard.getObjective(objective);
-        if (get == null && createNew) {
-            if (createNew) get = scoreboard.addObjective(objective, objective);
-            else throw new ReferenceError(`No such scoreboard objective "${objective}"`);
-        }
-        objective = get;
-        }
-        if (!(objective instanceof ScoreboardObjective))
-        throw new TypeError("The provided argument is not an instance of ScoreboardObjective");
-        return db.get(objective.id) ?? this.create(objective);
+    static open(objective, createNewObjective = true) {
+        return db.get(objective.id) ?? this.create(objective,createNewObjective);
     }
     /**
      * Opens a scoreboard objective and returns a ScoreboardDB instance.
      * @param {string|ScoreboardObjective} objective - The scoreboard objective to open.
-     * @param {boolean} createNew - Create new Scoreboard when there is no scoreboard for given id.
+     * @param {boolean} createNewObjective - Create new Scoreboard when there is no scoreboard for given id.
      * @static
      * @returns {ScoreboardDB} - The this instance.
      */
-    static create(objective, createNew = true){
-        const n = new this(objective,createNew,private_code);
-        console.warn("Done!")
+    static create(objective, createNewObjective = true){
+        const n = new this(objective,createNewObjective,private_code);
         n.update();
         return n;
     }
     /**
      * Creates a new ScoreboardDB instance.
+     * @private
      * @param {string|ScoreboardObjective} objective - The scoreboard objective to open.
-     * @param {boolean} [createNew=true] - Whether to create a new scoreboard objective if it doesn't exist.
+     * @param {boolean} [createNewObjective=true] - Whether to create a new scoreboard objective if it doesn't exist.
      */
-    constructor(objective, createNew, code) {
+    constructor(objective, createNewObjective, code) {
         if(code !== private_code) throw new ReferenceError("Constructor isn't public, please use Constructor.create(...)");
         super();
         if (typeof objective == "string") {
-        let get = scoreboard.getObjective(objective);
-        if (get == null && createNew) {
-            if (createNew) get = scoreboard.addObjective(objective, objective);
-            else throw new ReferenceError(`No such scoreboard objective "${objective}"`);
-        }
-        objective = get;
+            console.warn
+            let get = scoreboard.getObjective(objective);
+            if (get == null && createNewObjective) {
+                if (createNewObjective) get = scoreboard.addObjective(objective, objective);
+                else throw new ReferenceError(`No such scoreboard objective "${objective}"`);
+            }
+            objective = get;
         }
         if (!(objective instanceof ScoreboardObjective))
             throw new TypeError("The provided argument is not an instance of ScoreboardObjective");
         if (db.has(objective.id))
-            throw new ReferenceError(
-            `Database with id "${objective.id}" already exists. Use Database.open() to open or create a database.`
-        );
+            throw new ReferenceError(`Database with id "${objective.id}" already exists. Use Database.open() to open or create a database.`
+        )
+        db.set(objective.id,this);
         this.#objective = objective;
         this.#id = objective.id;
     }

@@ -21,9 +21,8 @@ export const Settings = {
 function formatText(type,...texts){
 
 }
-export async function TerminalInput(source, message){ let o = formatText.bind(null,false);
-    const a = await RunCode(message,true, {console:{log:o,warn:o,error:o},print:o, self:source});
-    if
+export async function TerminalInput(source, message){ let o = formatText;
+    const a = await RunCode(message,true, {console:{log:o.bind(null,),warn:o,error:o},print:o, self:source});
 }
 
 export async function RunCode(code, useModules = true, ...scopes){let func, output = {syntaxError:undefined, promise: undefined};
