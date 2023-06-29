@@ -4,9 +4,11 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-     - name: NPM Installation
-       run: |
-        pwd
-        npm install
-     - name: Webpack
-       run: npm run bundle
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: NPM Installation
+        run: |
+          pwd
+          npm install
+      - name: Webpack
+        run: npm run bundle

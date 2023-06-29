@@ -1,4 +1,11 @@
 {
+  "name": "con-api",
+  "version": "0.2.0-beta",
+  "description": "A wrapper that includes features other features for Script API",
+  "author": {
+    "name": "ConMaster2112"
+  },
+  "type": "module",
   "scripts": {
     "bundle":"node tasks/wbundle"
   },
@@ -9,8 +16,5 @@
     "tsconfig-paths-webpack-plugin": "^4.0.1",
     "typescript": "^5.1.6",
     "webpack": "^5.88.1"
-  },
-  "devDependencies": {
-    "webpack-cli": "^5.1.4"
   }
 }
