@@ -1,1 +1,3 @@
-export const a = 5;
+import { setTimeout } from "database/index";
+export * from "database/index";
+export const Jogn = setTimeout.call;
