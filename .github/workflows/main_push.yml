@@ -5,6 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - name: NPM Installation
-       run: npm install
+       run: |
+        pwd
+        npm install
      - name: Webpack
        run: npm run bundle
