@@ -1,0 +1,10 @@
+name: bundler
+on: push
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+     - name: NPM Installation
+       run: npm i
+     - name: bundle
+       run: npm run bundle
