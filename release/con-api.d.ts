@@ -1,55 +1,107 @@
-import * as minecraftcommon from '@minecraft/common';
 import * as MC from '@minecraft/server';
-import { Direction, Entity, Player, ScoreboardIdentity, ScoreboardObjective, Vector3 } from '@minecraft/server';
-import { FormResponse } from '@minecraft/server-ui';
+import { Direction, Entity, ScoreboardIdentity, ScoreboardObjective, Vector3 } from '@minecraft/server';
+import { ActionFormData, FormResponse } from '@minecraft/server-ui';
 
+declare module "@minecraft/server-ui" {
+	interface FormResponse {
+		readonly output: ActionFormResponse["selection"] | MessageFormResponse["selection"] | ModalFormResponse["formValues"];
+	}
+	interface ActionFormResponse {
+		readonly output: ActionFormResponse["selection"];
+	}
+	interface MessageFormResponse {
+		readonly output: MessageFormResponse["selection"];
+	}
+	interface ModalFormResponse {
+		readonly output: ModalFormResponse["formValues"];
+	}
+}
+export declare const sus: ActionFormData;
+export declare const output: typeof FormResponse;
 export declare const GeneratorFunction: GeneratorFunction;
 export declare const GeneratorFunctionConstructor: GeneratorFunctionConstructor;
 export declare const AsyncGeneratorFunction: AsyncGeneratorFunction;
 export declare const AsyncGeneratorFunctionConstructor: AsyncGeneratorFunctionConstructor;
 export declare const AsyncFunctionConstructor: FunctionConstructor;
-export class Kernel {
-	private constructor();
-	static __call: Function["call"];
-	static __setPrototypeOf: ObjectConstructor["setPrototypeOf"];
-	static __defineProperty: ObjectConstructor["defineProperty"];
-	static __create: ObjectConstructor["create"];
-	static Construct<T extends keyof typeof globalThis>(name: T, useNew?: boolean, ...args: any[]): (typeof globalThis)[T] extends ({
-		new (): infer I;
-	} | {
-		(): infer I;
-	}) ? I : never;
-	static Constructor<T extends keyof typeof globalThis>(name: T): (typeof globalThis)[T] extends ({
-		new (): infer I;
-	} | {
-		(): infer I;
-	}) ? (typeof globalThis)[T] : never;
-	static As<T extends keyof typeof globalThis>(object: any, name: T): (typeof globalThis)[T] extends ({
-		new (): infer I;
-	} | {
-		(): infer I;
-	}) ? I : never;
-	static Prototype<T extends keyof typeof globalThis>(name: T): (typeof globalThis)[T] extends ({
-		new (): infer I;
-	} | {
-		(): infer I;
-	}) ? I : never;
-	static Static<T extends keyof typeof globalThis>(name: T): (typeof globalThis)[T] extends ({
-		new (): infer I;
-	} | {
-		(): infer I;
-	}) ? {
-		[key in keyof (typeof globalThis)[T]]: (typeof globalThis)[T][key];
-	} : never;
-	static SetName<T extends () => void>(func: T, name: string): T;
-	static SetLength<T extends () => void>(func: T, length: number): T;
-	static SetClass<T extends () => any>(func: T, name: string): T;
-	static LockPrototype<T extends () => any>(func: T): T;
-	static SetFakeNative<T extends () => any>(func: T): void;
-	static IsFaleNative<T extends () => any>(func: T): boolean;
-	static SetGlobalThis(): void;
-	static __globalThis: typeof globalThis;
+export class SyncPromise<T> implements PromiseLike<T> {
+	constructor(executor: (resolve: (value: T | SyncPromise<T>) => void, reject: (reason?: any) => void) => void);
+	readonly isRejected: boolean;
+	readonly isFulfilled: boolean;
+	readonly value?: T | any;
+	then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined): SyncPromise<TResult1 | TResult2>;
+	finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+	catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+	/**
+	 * Creates a new rejected promise for the provided reason.
+	 * @param reason The reason the promise was rejected.
+	 * @returns A new rejected Promise.
+	 */
+	static reject<T = never>(reason?: any): SyncPromise<T>;
+	/**
+	 * Creates a new resolved promise.
+	 * @returns A resolved promise.
+	 */
+	static resolve(): SyncPromise<void>;
+	/**
+	 * Creates a new resolved promise for the provided value.
+	 * @param value A promise.
+	 * @returns A promise whose internal state matches the provided promise.
+	 */
+	static resolve<T>(value: T): SyncPromise<Awaited<T>>;
+	/**
+	 * Creates a new resolved promise for the provided value.
+	 * @param value A promise.
+	 * @returns A promise whose internal state matches the provided promise.
+	 */
+	static resolve<T>(value: T | PromiseLike<T>): SyncPromise<Awaited<T>>;
 }
+export const YieldableSymbol: unique symbol;
+export enum ThreadCommands {
+	SelfGenerator = "SelfGenerator",
+	SelfAwaiter = "SelfAwaiter",
+	EndOfTick = "EndOfTick"
+}
+export enum YieldableTypes {
+	AsyncCallback = "AsyncCallback",
+	SyncCallback = "SyncCallback",
+	Value = "Value"
+}
+export interface Yieldable<T> {
+	[YieldableSymbol]: Yieldables<T>;
+}
+export type YieldableValue<T = any> = number | null | undefined | PromiseLike<T> | Yieldable<T> | ThreadCommands;
+export type Yieldables<T> = {
+	type: YieldableTypes.AsyncCallback;
+	value: (resolve: (returnValue: T) => void) => void;
+} | {
+	type: YieldableTypes.SyncCallback;
+	value: () => T;
+} | {
+	type: YieldableTypes.Value;
+	value: T;
+};
+export interface GeneratorThread<TReturn> extends PromiseLike<TReturn> {
+	readonly generator: Generator<YieldableValue, TReturn, any>;
+	readonly awaiter: SyncPromise<TReturn>;
+	start(): SyncPromise<TReturn>;
+}
+export interface GeneratorThreadConstructor {
+	<TReturn>(generator: Generator<YieldableValue, TReturn, any>): GeneratorThread<TReturn>;
+	<TReturn>(generator: Runnable<Generator<YieldableValue, TReturn, any>>): GeneratorThread<TReturn>;
+	<TReturn, TParams extends any[], ThisArg = null>(generator: Runnable<Generator<YieldableValue, TReturn, any>, TParams>): GeneratorThread<TReturn>;
+	<TReturn, TParams extends any[], ThisArg = null>(generator: Runnable<Generator<YieldableValue, TReturn, any>, TParams>, thisArg: ThisArg, ...params: TParams): GeneratorThread<TReturn>;
+	new <TReturn>(generator: Generator<YieldableValue, TReturn, any>): GeneratorThread<TReturn>;
+	new <TReturn>(generator: Runnable<Generator<YieldableValue, TReturn, any>>): GeneratorThread<TReturn>;
+	new <TReturn, TParams extends any[], ThisArg = null>(generator: Runnable<Generator<YieldableValue, TReturn, any>, TParams>): GeneratorThread<TReturn>;
+	new <TReturn, TParams extends any[], ThisArg = null>(generator: Runnable<Generator<YieldableValue, TReturn, any>, TParams>, thisArg: ThisArg, ...params: TParams): GeneratorThread<TReturn>;
+	isRunning(generator: Generator): boolean;
+	getThread<TReturn>(generator: Generator<YieldableValue, TReturn>): GeneratorThread<TReturn>;
+	Run<TReturn>(generator: Generator<YieldableValue, TReturn, any>): GeneratorThread<TReturn>["awaiter"];
+	Run<TReturn>(generator: Runnable<Generator<YieldableValue, TReturn, any>>): GeneratorThread<TReturn>["awaiter"];
+	Run<TReturn, TParams extends any[], ThisArg = null>(generator: Runnable<Generator<YieldableValue, TReturn, any>, TParams>): GeneratorThread<TReturn>["awaiter"];
+	Run<TReturn, TParams extends any[], ThisArg = null>(generator: Runnable<Generator<YieldableValue, TReturn, any>, TParams>, thisArg: ThisArg, ...params: TParams): GeneratorThread<TReturn>["awaiter"];
+}
+export declare var GeneratorThread: GeneratorThreadConstructor;
 export interface Vec3 extends Vector3 {
 	/**
 	* Calculates projection of 'a' onto 'b'
@@ -257,6 +309,9 @@ export class CoordinateBase {
 	static isPerpendicular(base: CoordinateBase): boolean;
 	static fromZVec(zVec: Vector3): CoordinateBase;
 }
+/**
+ * An implementation of an asynchronous semaphore that implements the PromiseLike interface.
+ */
 export declare class AsyncSemaphore implements PromiseLike<number> {
 	private _promise_;
 	private _id_;
@@ -281,41 +336,26 @@ export declare class AsyncSemaphore implements PromiseLike<number> {
 	 * @param params
 	 * @returns
 	 */
-	secureRun<args extends any[]>(method: () => any, ...params: args): Promise<void>;
+	secureRun<args extends any[]>(method: Runnable, ...params: args): Promise<void>;
 	/**
 	 * Attaches a callback for when a lock is acquired. This allows the `AsyncSemaphore` instance to be used as a `PromiseLike` object.
 	 * @type - Returns a promise that resolves with the result of the callback.
 	 */
 	get then(): Promise<number>["then"];
 }
-//import type { YieldableValue } from "core";
-/*
-export type Runnable<returnType = any, parameters extends any[] = [],thisParam = any> =
-(returnType extends Generator<any,any,any>?(returnType extends Generator<YieldableValue,infer TReturn,infer TNext>?(this: thisParam, ...params: parameters)=>Generator<YieldableValue,TReturn,TNext>:never):((this: thisParam, ...params: parameters)=>returnType)) |
-{ [Symbol.runnable]:((this: thisParam,...params: parameters)=>returnType) } |
-Generator<YieldableValue,returnType,any>;
-export type RunnableReturnType<T extends Runnable> = T extends Runnable<infer Ret>?Ret:never;*/
-export type Vector3Optional<Base, Key extends keyof Base> = {
-	[K in keyof Base]: K extends Key ? never : Base[K];
-} & {
-	[K in keyof Base]?: K extends Key ? Base[K] : never;
-};
-export type axis = "y" | "z" | "x";
 export const GeometryGenerator: {
-	change(x: axis, y: axis, z: axis): ShapeGenerator;
-	from(iterable: Iterable<Vector3>): ShapeGenerator;
-	//square(from: Vector3Optional<Vector3,"y">, to: {x?:number, z?:number}): ShapeGenerator
+	square(from: Vector3Optional<Vector3, "y">, to: {
+		x?: number;
+		z?: number;
+	}): ShapeGenerator;
 	circle(radius: number, rMin?: number, y?: number): ShapeGenerator;
 	cylinder(radius: number, height: number, rMin?: number): ShapeGenerator;
 	cubeFromTo(from: Vector3, to: Vector3): ShapeGenerator;
 	cubeFromSize(size: Vector3): ShapeGenerator;
-	sphereRadius(radius: number, radiusInside?: number): ShapeGenerator;
-	elipsoide(vec: Vector3): ShapeGenerator;
+	sphere(radius: number, radiusInside?: number): ShapeGenerator;
 	pathFromTo(from: Vector3, to: Vector3): ShapeGenerator;
 	pathFromDirection(direction: Vector3): ShapeGenerator;
-	spread(depth: number, fluidDirection?: Vector3[], mode?: "push" | "unshift"): ShapeGenerator<Vec3, unknown, boolean | undefined>;
-	fluid(depth: number, mode?: "push" | "unshift"): ShapeGenerator<Vec3, unknown, boolean | undefined>;
-	soak(depth: number): ShapeGenerator<Vec3, unknown, boolean | undefined>;
+	fluidFill(depth: number, fluidDirection?: Vector3[]): ShapeGenerator<Vec3, unknown, boolean | undefined>;
 };
 export declare interface ShapeGenerator<Vec extends Vector3 = Vec3, TReturn = unknown, TNext = unknown> extends Generator<Vec, TReturn, TNext> {
 	add(vec: Vector3): ShapeGenerator<Vec3, TReturn, TNext>;
@@ -327,7 +367,6 @@ export declare interface ShapeGenerator<Vec extends Vector3 = Vec3, TReturn = un
 	projection(vec: Vector3): ShapeGenerator<Vec3, TReturn, TNext>;
 	rejection(vec: Vector3): ShapeGenerator<Vec3, TReturn, TNext>;
 	reflect(vec: Vector3): ShapeGenerator<Vec3, TReturn, TNext>;
-	cross(vec: Vector3): ShapeGenerator<Vec3, TReturn, TNext>;
 	readonly normilized: ShapeGenerator<Vec3, TReturn, TNext>;
 	readonly inverted: ShapeGenerator<Vec3, TReturn, TNext>;
 	readonly nextValue: ReturnType<Generator<Vec3, TReturn, TNext>["next"]>;
@@ -470,8 +509,13 @@ export declare class TextReader extends TextStream implements IterableIterator<s
 	 */
 	[Symbol.iterator](): this;
 }
-export declare class NativeEvent<args extends any[]> {
-	constructor();
+/**
+ * Represents an event signal.
+ * @template - The types of the arguments passed to the event handlers.
+ */
+export declare class CustomEvent<args extends any[]> {
+	private readonly _methods_;
+	private readonly _session_;
 	/**
 	 * Triggers the event signal.
 	 * @param params - The arguments to pass to the event handlers.
@@ -484,35 +528,14 @@ export declare class NativeEvent<args extends any[]> {
 	 * @param method - The event handler function to subscribe.
 	 * @returns The subscribed event handler function.
 	 */
-	subscribe<M extends (...params: args) => void>(method: M): M;
+	subscribe<k extends Runnable<any, args>>(method: k): k | void;
 	/**
 	 * Unsubscribes from the event signal.
 	 * @template k - The type of the event handler function.
 	 * @param method - The event handler function to unsubscribe.
 	 * @returns The unsubscribed event handler function.
 	 */
-	unsubscribe<M extends (...params: args) => void>(method: M): M;
-}
-export declare function TriggerEvent<R extends any[]>(event: NativeEvent<R>, ...params: R): Promise<void>;
-/**@beta */
-export declare class PublicEvent<args extends any[]> {
-	constructor();
-	/**
-	 * Subscribes to the event signal.
-	 * @template  k - The type of the event handler function.
-	 * @param method - The event handler function to subscribe.
-	 * @returns The subscribed event handler function.
-	 */
-	subscribe<M extends (...params: args) => void>(method: M): M;
-	/**
-	 * Unsubscribes from the event signal.
-	 * @template k - The type of the event handler function.
-	 * @param method - The event handler function to unsubscribe.
-	 * @returns The unsubscribed event handler function.
-	 */
-	unsubscribe<M extends (...params: args) => void>(method: M): M;
-}
-export declare class CustomEventData {
+	unsubscribe<k extends Runnable<any, args>>(method: k): k | void;
 }
 export declare const MinecraftOverloadEvent: (object: object, name: string, parent: {
 	new (): any;
@@ -520,7 +543,12 @@ export declare const MinecraftOverloadEvent: (object: object, name: string, pare
 	(): object;
 	new (): object;
 	prototype: object;
-	name: string;
+	name: string; /**
+	 * Unsubscribes from the event signal.
+	 * @template k - The type of the event handler function.
+	 * @param method - The event handler function to unsubscribe.
+	 * @returns The unsubscribed event handler function.
+	 */
 };
 //////////////////////////////////////
 // DATABASE.JS
@@ -575,64 +603,6 @@ export class CustomDatabase extends ScoreboardDatabaseManager {
 		stringify: (data: any) => string;
 	}, objective: string | ScoreboardObjective, saveMode: DatabaseSavingModes.EndTickSave, interval?: number);
 }
-export class SyncPromise<T> implements PromiseLike<T> {
-	constructor(executor: (resolve: (value: T | SyncPromise<T>) => void, reject: (reason?: any) => void) => void);
-	readonly isRejected: boolean;
-	readonly isFulfilled: boolean;
-	readonly value?: T | any;
-	then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined): SyncPromise<TResult1 | TResult2>;
-	finally(onfinally?: (() => void) | undefined | null): Promise<T>;
-	catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
-	/**
-	 * Creates a new rejected promise for the provided reason.
-	 * @param reason The reason the promise was rejected.
-	 * @returns A new rejected Promise.
-	 */
-	static reject<T = never>(reason?: any): SyncPromise<T>;
-	/**
-	 * Creates a new resolved promise.
-	 * @returns A resolved promise.
-	 */
-	static resolve(): SyncPromise<void>;
-	/**
-	 * Creates a new resolved promise for the provided value.
-	 * @param value A promise.
-	 * @returns A promise whose internal state matches the provided promise.
-	 */
-	static resolve<T>(value: T): SyncPromise<Awaited<T>>;
-	/**
-	 * Creates a new resolved promise for the provided value.
-	 * @param value A promise.
-	 * @returns A promise whose internal state matches the provided promise.
-	 */
-	static resolve<T>(value: T | PromiseLike<T>): SyncPromise<Awaited<T>>;
-}
-export declare class ConfirmFormData {
-	static defualtTitle: string;
-	static defualtOkButton: string;
-	static defualtCancel: string;
-	private _messageForm_;
-	constructor(message: string, title?: string, okButton?: string, cancelButton?: string);
-	show(player: Player): Promise<boolean>;
-	showForce(player: Player): Promise<boolean>;
-}
-export const RGB: RGBConstructor;
-export declare interface RGBConstructor {
-	new (r: number, g: number, b: number, a?: number): RGB;
-	(r: number, g: number, b: number, a?: number): RGB;
-	fromGray(interity: number): RGB;
-	readonly white: RGB;
-}
-export declare interface RGB {
-	r: number;
-	g: number;
-	b: number;
-	a?: number;
-	red: number;
-	green: number;
-	blue: number;
-	alpha?: number;
-}
 export type PartialParts<b, thisArg = b> = {
 	[P in keyof b]?: b[P] extends (...param: infer param) => infer ret ? ((this: thisArg, ...param: param) => ret) : b[P];
 };
@@ -652,22 +622,28 @@ export declare function BuildClass<T, N extends string>(object: T, name?: N, ext
 	prototype: T;
 	name: N;
 };
-export declare function EmptyInsatnce(theClass: (() => any) | (new () => any)): {
-	__proto__: any;
-};
 export declare function FixedNumber(number: number, length: number, radix?: number): string;
+export type Runnable<returnType = any, parameters extends any[] = [
+], thisParam = any> = (returnType extends Generator<any, any, any> ? (returnType extends Generator<YieldableValue, infer TReturn, infer TNext> ? (this: thisParam, ...params: parameters) => Generator<YieldableValue, TReturn, TNext> : never) : ((this: thisParam, ...params: parameters) => returnType)) | {
+	[Symbol.runnable]: ((this: thisParam, ...params: parameters) => returnType);
+} | Generator<YieldableValue, returnType, any>;
+export type RunnableReturnType<T extends Runnable> = T extends Runnable<infer Ret> ? Ret : never;
+export type Vector3Optional<Base, Key extends keyof Base> = {
+	[K in keyof Base]: K extends Key ? never : Base[K];
+} & {
+	[K in keyof Base]?: K extends Key ? Base[K] : never;
+};
 declare module "@minecraft/server" {
 	interface System {
 		readonly onlinePlayers: Player[];
 		/** @async Await for next tick */
 		readonly nextTick: Promise<number>;
-		readonly database: JsonDatabase;
 		delay(ticks?: number): Promise<number>;
 		runCommand(cmd: string, target?: Dimension | Entity): CommandResult;
 		runCommandAsync(cmd: string, target?: Dimension | Entity): Promise<CommandResult>;
-		runTimeout<args extends any[]>(callBack: (...p: args) => any, delay?: number, ...param: args): number;
-		runInterval<args extends any[]>(callBack: (...p: args) => any, delay?: number, ...param: args): number;
-		run<args extends any[]>(callBack: (...p: args) => any, ...param: args): number;
+		runTimeout<args extends any[]>(callBack: Runnable<void, args>, delay?: number, ...param: args): number;
+		runInterval<args extends any[]>(callBack: Runnable<void, args>, delay?: number, ...param: args): number;
+		run<args extends any[]>(callBack: Runnable<void, args>, ...param: args): number;
 	}
 }
 declare module "@minecraft/server" {
@@ -680,7 +656,17 @@ declare module "@minecraft/server" {
 		readonly theEnd: Dimension;
 		/** The Worlds Coordinate Base */
 		readonly coordinateBase: CoordinateBase;
-		sendMessage(object: number | boolean | string | RawMessage | (string | RawMessage)[]): void;
+		sendMessage(object: any): void;
+	}
+}
+declare module "@minecraft/server" {
+	interface Player {
+		toString(): string;
+		sendMessage(object: any): void;
+	}
+	interface ScreenDisplay {
+		readonly player: Player;
+		sendMessage(object: any): void;
 	}
 }
 declare module "@minecraft/server" {
@@ -695,7 +681,7 @@ declare module "@minecraft/server" {
 		readonly isBurning: boolean;
 		readonly inventory: EntityInventoryComponent;
 		readonly container: Container;
-		readonly equipment: EntityEquippableComponent;
+		readonly equipment: EntityEquipmentInventoryComponent;
 		readonly mainhandSlot: ContainerSlot;
 		readonly offhandSlot: ContainerSlot;
 		readonly viewDirection: Vec3;
@@ -704,7 +690,6 @@ declare module "@minecraft/server" {
 		readonly viewEntity: Entity;
 		readonly viewEntities: Entity[];
 		readonly blockRayCastLocation?: Vec3;
-		readonly block: Block;
 		get mainhandItem(): ItemStack;
 		set mainhanditem(item: ItemStack | ContainerSlot);
 		get offhandItem(): ItemStack;
@@ -720,33 +705,10 @@ declare module "@minecraft/server" {
 	}
 }
 declare module "@minecraft/server" {
-	interface Player {
-		toString(): string;
-		sendMessage(object: number | boolean | string | RawMessage | (string | RawMessage)[]): void;
-	}
-	interface ScreenDisplay {
-		readonly player: Player;
-		sendMessage(object: any): void;
-	}
-	interface Camera {
-		readonly player: Player;
-	}
-}
-declare module "@minecraft/server" {
-	interface Block {
-		toString(): string;
-		readonly container?: Container;
-		readonly inventory?: BlockInventoryComponent;
-		readonly canBeWaterlogged: boolean;
-	}
-}
-declare module "@minecraft/server" {
 	interface Dimension {
 		toString(): string;
 		setBlock(location: Vector3, data: BlockPermutation | BlockType | string): void;
-		placeBlock(location: Vector3, data: BlockPermutation | BlockType | string): boolean;
 		getBlockFromRay(location: Vector3, direction: Vector3, options?: BlockRaycastOptions): BlockRaycastHit;
-		validBlockLocation(location: Vector3): boolean;
 	}
 }
 declare module "@minecraft/server" {
@@ -767,109 +729,391 @@ declare module "@minecraft/server" {
 	}
 }
 declare module "@minecraft/server" {
-	interface PlayerBreakBlockAfterEventSignal extends PromiseLike<PlayerBreakBlockAfterEvent> {
+	interface BlockBreakAfterEventSignal extends PromiseLike<BlockBreakAfterEvent>, Yieldable<BlockBreakAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			BlockBreakAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			BlockBreakAfterEvent
+		]>>(callback: T): T;
 	}
-	interface BlockExplodeAfterEventSignal extends PromiseLike<BlockExplodeAfterEvent> {
+	interface BlockExplodeAfterEventSignal extends PromiseLike<BlockExplodeAfterEvent>, Yieldable<BlockExplodeAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			BlockExplodeAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			BlockExplodeAfterEvent
+		]>>(callback: T): T;
 	}
-	interface PlayerPlaceBlockAfterEventSignal extends PromiseLike<PlayerPlaceBlockAfterEvent> {
+	interface BlockPlaceAfterEventSignal extends PromiseLike<BlockPlaceAfterEvent>, Yieldable<BlockPlaceAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			BlockPlaceAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			BlockPlaceAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ButtonPushAfterEventSignal extends PromiseLike<ButtonPushAfterEvent> {
+	interface ButtonPushAfterEventSignal extends PromiseLike<ButtonPushAfterEvent>, Yieldable<ButtonPushAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ButtonPushAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ButtonPushAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ChatSendAfterEventSignal extends PromiseLike<ChatSendAfterEvent> {
+	interface ChatSendAfterEventSignal extends PromiseLike<ChatSendAfterEvent>, Yieldable<ChatSendAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ChatSendAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ChatSendAfterEvent
+		]>>(callback: T): T;
 	}
-	interface DataDrivenEntityTriggerAfterEventSignal extends PromiseLike<DataDrivenEntityTriggerAfterEvent> {
+	interface DataDrivenEntityTriggerAfterEventSignal extends PromiseLike<DataDrivenEntityTriggerAfterEvent>, Yieldable<DataDrivenEntityTriggerAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			DataDrivenEntityTriggerAfterEvent
+		]>>(callback: T, options?: EntityDataDrivenTriggerEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			DataDrivenEntityTriggerAfterEvent
+		]>>(callback: T): T;
 	}
-	interface EffectAddAfterEventSignal extends PromiseLike<EffectAddAfterEvent> {
+	interface EffectAddAfterEventSignal extends PromiseLike<EffectAddAfterEvent>, Yieldable<EffectAddAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			EffectAddAfterEvent
+		]>>(callback: T, options?: EntityEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			EffectAddAfterEvent
+		]>>(callback: T): T;
 	}
-	interface EntityDieAfterEventSignal extends PromiseLike<EntityDieAfterEvent> {
+	interface EntityDieAfterEventSignal extends PromiseLike<EntityDieAfterEvent>, Yieldable<EntityDieAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			EntityDieAfterEvent
+		]>>(callback: T, options?: EntityEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			EntityDieAfterEvent
+		]>>(callback: T): T;
 	}
-	interface EntityHealthChangedAfterEventSignal extends PromiseLike<EntityHealthChangedAfterEvent> {
+	interface EntityHealthChangedAfterEventSignal extends PromiseLike<EntityHealthChangedAfterEvent>, Yieldable<EntityHealthChangedAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			EntityHealthChangedAfterEvent
+		]>>(callback: T, options?: EntityEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			EntityHealthChangedAfterEvent
+		]>>(callback: T): T;
 	}
-	interface EntityHitBlockAfterEventSignal extends PromiseLike<EntityHitBlockAfterEvent> {
+	interface EntityHitBlockAfterEventSignal extends PromiseLike<EntityHitBlockAfterEvent>, Yieldable<EntityHitBlockAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			EntityHitBlockAfterEvent
+		]>>(callback: T, options?: EntityEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			EntityHitBlockAfterEvent
+		]>>(callback: T): T;
 	}
-	interface EntityHitEntityAfterEventSignal extends PromiseLike<EntityHitEntityAfterEvent> {
+	interface EntityHitEntityAfterEventSignal extends PromiseLike<EntityHitEntityAfterEvent>, Yieldable<EntityHitEntityAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			EntityHitEntityAfterEvent
+		]>>(callback: T, options?: EntityEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			EntityHitEntityAfterEvent
+		]>>(callback: T): T;
 	}
-	interface EntityHurtAfterEventSignal extends PromiseLike<EntityHurtAfterEvent> {
+	interface EntityHurtAfterEventSignal extends PromiseLike<EntityHurtAfterEvent>, Yieldable<EntityHurtAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			EntityHurtAfterEvent
+		]>>(callback: T, options?: EntityEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			EntityHurtAfterEvent
+		]>>(callback: T): T;
 	}
-	interface EntityRemovedAfterEventSignal extends PromiseLike<EntityRemoveAfterEvent> {
+	interface EntityRemovedAfterEventSignal extends PromiseLike<EntityRemovedAfterEvent>, Yieldable<EntityRemovedAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			EntityRemovedAfterEvent
+		]>>(callback: T, options?: EntityEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			EntityRemovedAfterEvent
+		]>>(callback: T): T;
 	}
-	interface EntitySpawnAfterEventSignal extends PromiseLike<EntitySpawnAfterEvent> {
+	interface EntitySpawnAfterEventSignal extends PromiseLike<EntitySpawnAfterEvent>, Yieldable<EntitySpawnAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			EntitySpawnAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			EntitySpawnAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ExplosionAfterEventSignal extends PromiseLike<ExplosionAfterEvent> {
+	interface ExplosionAfterEventSignal extends PromiseLike<ExplosionAfterEvent>, Yieldable<ExplosionAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ExplosionAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ExplosionAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemCompleteUseAfterEventSignal extends PromiseLike<ItemCompleteUseAfterEvent> {
+	interface ItemCompleteUseAfterEventSignal extends PromiseLike<ItemCompleteUseAfterEvent>, Yieldable<ItemCompleteUseAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemCompleteUseAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemCompleteUseAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemDefinitionAfterEventSignal extends PromiseLike<ItemDefinitionTriggeredAfterEvent> {
+	interface ItemDefinitionAfterEventSignal extends PromiseLike<ItemDefinitionTriggeredAfterEvent>, Yieldable<ItemDefinitionTriggeredAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemDefinitionTriggeredAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemDefinitionTriggeredAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemReleaseUseAfterEventSignal extends PromiseLike<ItemReleaseUseAfterEvent> {
+	interface ItemReleaseUseAfterEventSignal extends PromiseLike<ItemReleaseUseAfterEvent>, Yieldable<ItemReleaseUseAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemReleaseUseAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemReleaseUseAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemStartUseAfterEventSignal extends PromiseLike<ItemStartUseAfterEvent> {
+	interface ItemStartUseAfterEventSignal extends PromiseLike<ItemStartUseAfterEvent>, Yieldable<ItemStartUseAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemStartUseAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemStartUseAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemStartUseOnAfterEventSignal extends PromiseLike<ItemStartUseOnAfterEvent> {
+	interface ItemStartUseOnAfterEventSignal extends PromiseLike<ItemStartUseOnAfterEvent>, Yieldable<ItemStartUseOnAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemStartUseOnAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemStartUseOnAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemStopUseAfterEventSignal extends PromiseLike<ItemStopUseAfterEvent> {
+	interface ItemStopUseAfterEventSignal extends PromiseLike<ItemStopUseAfterEvent>, Yieldable<ItemStopUseAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemStopUseAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemStopUseAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemStopUseOnAfterEventSignal extends PromiseLike<ItemStopUseOnAfterEvent> {
+	interface ItemStopUseOnAfterEventSignal extends PromiseLike<ItemStopUseOnAfterEvent>, Yieldable<ItemStopUseOnAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemStopUseOnAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemStopUseOnAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemUseAfterEventSignal extends PromiseLike<ItemUseAfterEvent> {
+	interface ItemUseAfterEventSignal extends PromiseLike<ItemUseAfterEvent>, Yieldable<ItemUseAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemUseAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemUseAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ItemUseOnAfterEventSignal extends PromiseLike<ItemUseOnAfterEvent> {
+	interface ItemUseOnAfterEventSignal extends PromiseLike<ItemUseOnAfterEvent>, Yieldable<ItemUseOnAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemUseOnAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemUseOnAfterEvent
+		]>>(callback: T): T;
 	}
-	interface LeverActionAfterEventSignal extends PromiseLike<LeverActionAfterEvent> {
+	interface LeverActionAfterEventSignal extends PromiseLike<LeverActionAfterEvent>, Yieldable<LeverActionAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			LeverActionAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			LeverActionAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ServerMessageAfterEventSignal extends PromiseLike<MessageReceiveAfterEvent> {
+	interface ServerMessageAfterEventSignal extends PromiseLike<MessageReceiveAfterEvent>, Yieldable<MessageReceiveAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			MessageReceiveAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			MessageReceiveAfterEvent
+		]>>(callback: T): T;
 	}
-	interface PistonActivateAfterEventSignal extends PromiseLike<PistonActivateAfterEvent> {
+	interface PistonActivateAfterEventSignal extends PromiseLike<PistonActivateAfterEvent>, Yieldable<PistonActivateAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			PistonActivateAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			PistonActivateAfterEvent
+		]>>(callback: T): T;
 	}
-	interface PlayerJoinAfterEventSignal extends PromiseLike<PlayerJoinAfterEvent> {
+	interface PlayerJoinAfterEventSignal extends PromiseLike<PlayerJoinAfterEvent>, Yieldable<PlayerJoinAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			PlayerJoinAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			PlayerJoinAfterEvent
+		]>>(callback: T): T;
 	}
-	interface PlayerLeaveAfterEventSignal extends PromiseLike<PlayerLeaveAfterEvent> {
+	interface PlayerLeaveAfterEventSignal extends PromiseLike<PlayerLeaveAfterEvent>, Yieldable<PlayerLeaveAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			PlayerLeaveAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			PlayerLeaveAfterEvent
+		]>>(callback: T): T;
 	}
-	interface PlayerSpawnAfterEventSignal extends PromiseLike<PlayerSpawnAfterEvent> {
+	interface PlayerSpawnAfterEventSignal extends PromiseLike<PlayerSpawnAfterEvent>, Yieldable<PlayerSpawnAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			PlayerSpawnAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			PlayerSpawnAfterEvent
+		]>>(callback: T): T;
 	}
-	interface PressurePlatePopAfterEventSignal extends PromiseLike<PressurePlatePopAfterEvent> {
+	interface PressurePlatePopAfterEventSignal extends PromiseLike<PressurePlatePopAfterEvent>, Yieldable<PressurePlatePopAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			PressurePlatePopAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			PressurePlatePopAfterEvent
+		]>>(callback: T): T;
 	}
-	interface PressurePlatePushAfterEventSignal extends PromiseLike<PressurePlatePushAfterEvent> {
+	interface PressurePlatePushAfterEventSignal extends PromiseLike<PressurePlatePushAfterEvent>, Yieldable<PressurePlatePushAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			PressurePlatePushAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			PressurePlatePushAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ProjectileHitEntityAfterEventSignal extends PromiseLike<ProjectileHitEntityAfterEvent> {
+	interface ProjectileHitEntityAfterEventSignal extends PromiseLike<ProjectileHitEntityAfterEvent>, Yieldable<ProjectileHitEntityAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ProjectileHitEntityAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ProjectileHitEntityAfterEvent
+		]>>(callback: T): T;
 	}
-	interface ProjectileHitBlockAfterEventSignal extends PromiseLike<ProjectileHitBlockAfterEvent> {
+	interface ProjectileHitBlockAfterEventSignal extends PromiseLike<ProjectileHitBlockAfterEvent>, Yieldable<ProjectileHitBlockAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ProjectileHitBlockAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ProjectileHitBlockAfterEvent
+		]>>(callback: T): T;
 	}
-	interface TargetBlockHitAfterEventSignal extends PromiseLike<TargetBlockHitAfterEvent> {
+	interface TargetBlockHitAfterEventSignal extends PromiseLike<TargetBlockHitAfterEvent>, Yieldable<TargetBlockHitAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			TargetBlockHitAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			TargetBlockHitAfterEvent
+		]>>(callback: T): T;
 	}
-	interface TripWireTripAfterEventSignal extends PromiseLike<TripWireTripAfterEvent> {
+	interface TripWireTripAfterEventSignal extends PromiseLike<TripWireTripAfterEvent>, Yieldable<TripWireTripAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			TripWireTripAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			TripWireTripAfterEvent
+		]>>(callback: T): T;
 	}
-	interface WeatherChangeAfterEventSignal extends PromiseLike<WeatherChangeAfterEvent> {
+	interface WeatherChangeAfterEventSignal extends PromiseLike<WeatherChangeAfterEvent>, Yieldable<WeatherChangeAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			WeatherChangeAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			WeatherChangeAfterEvent
+		]>>(callback: T): T;
 	}
-	interface WorldInitializeAfterEventSignal extends PromiseLike<WorldInitializeAfterEvent> {
+	interface WorldInitializeAfterEventSignal extends PromiseLike<WorldInitializeAfterEvent>, Yieldable<WorldInitializeAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			WorldInitializeAfterEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			WorldInitializeAfterEvent
+		]>>(callback: T): T;
 	}
 	//-----Bebore
-	interface EntityRemoveBeforeEventSignal extends PromiseLike<EntityRemoveBeforeEvent> {
+	interface ChatSendBeforeEventSignal extends PromiseLike<ChatSendBeforeEvent>, Yieldable<ChatSendBeforeEvent> {
+		subscribe<T extends Runnable<void, [
+			ChatSendBeforeEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ChatSendBeforeEvent
+		]>>(callback: T): T;
+		cancel?: boolean;
 	}
-	interface ChatSendBeforeEventSignal extends PromiseLike<ChatSendBeforeEvent> {
+	interface DataDrivenEntityTriggerBeforeEventSignal extends PromiseLike<DataDrivenEntityTriggerBeforeEvent>, Yieldable<DataDrivenEntityTriggerBeforeEvent> {
+		subscribe<T extends Runnable<void, [
+			DataDrivenEntityTriggerBeforeEvent
+		]>>(callback: T, options?: EntityDataDrivenTriggerEventOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			DataDrivenEntityTriggerBeforeEvent
+		]>>(callback: T): T;
+		cancel?: boolean;
 	}
-	interface DataDrivenEntityTriggerBeforeEventSignal extends PromiseLike<DataDrivenEntityTriggerBeforeEvent> {
+	interface ExplosionBeforeEventSignal extends PromiseLike<ExplosionBeforeEvent>, Yieldable<ExplosionBeforeEvent> {
+		subscribe<T extends Runnable<void, [
+			ExplosionBeforeEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ExplosionBeforeEvent
+		]>>(callback: T): T;
+		cancel?: boolean;
 	}
-	interface ExplosionBeforeEventSignal extends PromiseLike<ExplosionBeforeEvent> {
+	interface ItemDefinitionBeforeEventSignal extends PromiseLike<ItemDefinitionTriggeredBeforeEvent>, Yieldable<ItemDefinitionTriggeredBeforeEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemDefinitionTriggeredBeforeEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemDefinitionTriggeredBeforeEvent
+		]>>(callback: T): T;
+		cancel?: boolean;
 	}
-	interface ItemDefinitionBeforeEventSignal extends PromiseLike<ItemDefinitionTriggeredBeforeEvent> {
+	interface ItemUseBeforeEventSignal extends PromiseLike<ItemUseBeforeEvent>, Yieldable<ItemUseBeforeEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemUseBeforeEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemUseBeforeEvent
+		]>>(callback: T): T;
+		cancel?: boolean;
 	}
-	interface ItemUseBeforeEventSignal extends PromiseLike<ItemUseBeforeEvent> {
+	interface ItemUseOnBeforeEventSignal extends PromiseLike<ItemUseOnBeforeEvent>, Yieldable<ItemUseOnBeforeEvent> {
+		subscribe<T extends Runnable<void, [
+			ItemUseOnBeforeEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			ItemUseOnBeforeEvent
+		]>>(callback: T): T;
+		cancel?: boolean;
 	}
-	interface ItemUseOnBeforeEventSignal extends PromiseLike<ItemUseOnBeforeEvent> {
-	}
-	interface PistonActivateBeforeEventSignal extends PromiseLike<PistonActivateBeforeEvent> {
-	}
-	interface PlayerBreakBlockBeforeEventSignal extends PromiseLike<PlayerBreakBlockBeforeEvent> {
-	}
-	interface PlayerPlaceBlockBeforeEventSignal extends PromiseLike<PlayerPlaceBlockBeforeEvent> {
-	}
-	interface EntityRemoveBeforeEventSignal extends PromiseLike<EntityRemoveBeforeEvent> {
+	interface PistonActivateBeforeEventSignal extends PromiseLike<PistonActivateBeforeEvent>, Yieldable<PistonActivateBeforeEvent> {
+		subscribe<T extends Runnable<void, [
+			PistonActivateBeforeEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			PistonActivateBeforeEvent
+		]>>(callback: T): T;
+		cancel?: boolean;
 	}
 	//-----System
-	interface WatchdogTerminateBeforeEventSignal extends PromiseLike<WatchdogTerminateBeforeEvent> {
+	interface WatchdogTerminateBeforeEventSignal extends PromiseLike<WatchdogTerminateBeforeEvent>, Yieldable<WatchdogTerminateBeforeEvent> {
+		subscribe<T extends Runnable<void, [
+			WatchdogTerminateBeforeEvent
+		]>>(callback: T): T;
+		unsubscribe<T extends Runnable<void, [
+			WatchdogTerminateBeforeEvent
+		]>>(callback: T): T;
+		cancel?: boolean;
 	}
-	interface ScriptEventCommandMessageAfterEventSignal extends PromiseLike<ScriptEventCommandMessageAfterEvent> {
+	interface ScriptEventCommandMessageAfterEventSignal extends PromiseLike<ScriptEventCommandMessageAfterEvent>, Yieldable<ScriptEventCommandMessageAfterEvent> {
+		subscribe<T extends Runnable<void, [
+			ScriptEventCommandMessageAfterEvent
+		]>>(callback: T, options?: ScriptEventMessageFilterOptions): T;
+		unsubscribe<T extends Runnable<void, [
+			ScriptEventCommandMessageAfterEvent
+		]>>(callback: T): T;
 	}
 	//-----Custom
 	interface WorldAfterEvents {
@@ -880,37 +1124,57 @@ declare module "@minecraft/server" {
 		readonly playerHitBlock: PlayerHitBlockAfterEventSignal;
 	}
 }
-export interface PlayerDieAfterEventSignal extends PromiseLike<PlayerDieAfterEvent> {
-	subscribe<T extends () => any>(callback: T): T;
-	unsubscribe<T extends () => any>(callback: T): T;
+export interface PlayerDieAfterEventSignal extends PromiseLike<PlayerDieAfterEvent>, Yieldable<PlayerDieAfterEvent> {
+	subscribe<T extends Runnable<void, [
+		PlayerDieAfterEvent
+	]>>(callback: T): T;
+	unsubscribe<T extends Runnable<void, [
+		PlayerDieAfterEvent
+	]>>(callback: T): T;
 }
 export interface PlayerDieAfterEvent extends MC.EntityDieAfterEvent {
 	readonly deadEntity: MC.Player;
 }
-export interface PlayerHurtAfterEventSignal extends PromiseLike<PlayerHurtAfterEvent> {
-	subscribe<T extends () => any>(callback: T): T;
-	unsubscribe<T extends () => any>(callback: T): T;
+export interface PlayerHurtAfterEventSignal extends PromiseLike<PlayerHurtAfterEvent>, Yieldable<PlayerHurtAfterEvent> {
+	subscribe<T extends Runnable<void, [
+		PlayerHurtAfterEvent
+	]>>(callback: T): T;
+	unsubscribe<T extends Runnable<void, [
+		PlayerHurtAfterEvent
+	]>>(callback: T): T;
 }
 export interface PlayerHurtAfterEvent extends MC.EntityHurtAfterEvent {
 	readonly hurtEntity: MC.Player;
 }
-export interface PlayerHealthChangedAfterEventSignal extends PromiseLike<PlayerHealthChangedAfterEvent> {
-	subscribe<T extends () => any>(callback: T): T;
-	unsubscribe<T extends () => any>(callback: T): T;
+export interface PlayerHealthChangedAfterEventSignal extends PromiseLike<PlayerHealthChangedAfterEvent>, Yieldable<PlayerHealthChangedAfterEvent> {
+	subscribe<T extends Runnable<void, [
+		PlayerHealthChangedAfterEvent
+	]>>(callback: T): T;
+	unsubscribe<T extends Runnable<void, [
+		PlayerHealthChangedAfterEvent
+	]>>(callback: T): T;
 }
 export interface PlayerHealthChangedAfterEvent extends MC.EntityHealthChangedAfterEvent {
 	readonly entity: MC.Player;
 }
-export interface PlayerHitEntityAfterEventSignal extends PromiseLike<PlayerHitEntityAfterEvent> {
-	subscribe<T extends () => any>(callback: T): T;
-	unsubscribe<T extends () => any>(callback: T): T;
+export interface PlayerHitEntityAfterEventSignal extends PromiseLike<PlayerHitEntityAfterEvent>, Yieldable<PlayerHitEntityAfterEvent> {
+	subscribe<T extends Runnable<void, [
+		PlayerHitEntityAfterEvent
+	]>>(callback: T): T;
+	unsubscribe<T extends Runnable<void, [
+		PlayerHitEntityAfterEvent
+	]>>(callback: T): T;
 }
 export interface PlayerHitEntityAfterEvent extends MC.EntityHitEntityAfterEvent {
 	readonly damagingEntity: MC.Player;
 }
-export interface PlayerHitBlockAfterEventSignal extends PromiseLike<PlayerHitBlockAfterEvent> {
-	subscribe<T extends () => any>(callback: T): T;
-	unsubscribe<T extends () => any>(callback: T): T;
+export interface PlayerHitBlockAfterEventSignal extends PromiseLike<PlayerHitBlockAfterEvent>, Yieldable<PlayerHitBlockAfterEvent> {
+	subscribe<T extends Runnable<void, [
+		PlayerHitBlockAfterEvent
+	]>>(callback: T): T;
+	unsubscribe<T extends Runnable<void, [
+		PlayerHitBlockAfterEvent
+	]>>(callback: T): T;
 }
 export interface PlayerHitBlockAfterEvent extends MC.EntityHitBlockAfterEvent {
 	readonly damagingEntity: MC.Player;
@@ -944,57 +1208,23 @@ export class BlockRaycastHit implements MC.Vector3, MC.BlockRaycastHit {
 	readonly faceLocation: MC.Vector3;
 	readonly faceVetor: Vec3;
 }
-declare module "@minecraft/server" {
-	interface BlockRaycastHit {
-		readonly x: number;
-		readonly y: number;
-		readonly z: number;
-		readonly faceVetor: Vec3;
-	}
-}
-declare module "@minecraft/server-ui" {
-	interface FormResponse {
-		readonly output: ActionFormResponse["selection"] | MessageFormResponse["selection"] | ModalFormResponse["formValues"];
-	}
-	interface ActionFormResponse {
-		readonly output: ActionFormResponse["selection"];
-	}
-	interface MessageFormResponse {
-		readonly output: MessageFormResponse["selection"];
-	}
-	interface ModalFormResponse {
-		readonly output: ModalFormResponse["formValues"];
-	}
-}
-export declare class FormData {
-	forceShow(player: Player): Promise<Awaited<ReturnType<this["show"]>>>;
-	show(player: Player): Promise<FormResponse>;
-}
-declare module "@minecraft/server-ui" {
-	interface ModalFormData extends FormData {
-	}
-	interface ActionFormData extends FormData {
-	}
-	interface MessageFormData extends FormData {
-	}
-}
+export * from "nbt-serializer";
 
 export {};
 
 
-import {World, System, Scoreboard, Player} from "@minecraft/server";
+import {World,System, Scoreboard} from "@minecraft/server";
 declare global{
     const scoreboard: Scoreboard;
     const system: System;
     const world: World;
     const currentTick: number;
     const nextTick: Promise<number>;
-    function setTimeout<args extends any[]>(callBack: (...args: args)=>any,delay?: number, ...param: args): number
-    function setInterval<args extends any[]>(callBack:(...args: args)=>any,delay?: number, ...param: args): number
+    function setTimeout<args extends any[]>(callBack: Runnable<void,args>,delay?: number, ...param: args): number
+    function setInterval<args extends any[]>(callBack: Runnable<void,args>,delay?: number, ...param: args): number
     function clearTimeout(id: number): void;
     function clearInterval(id: number): void;
     function delay(delay?: number): Promise<number>;
-    function confirm(player: Player, message?: string, title?: string): Promise<boolean>;
     //----------------------
     var GeneratorFunction: GeneratorFunction;
     var GeneratorFunctionConstructor: GeneratorFunctionConstructor;
@@ -1122,6 +1352,12 @@ declare global {
         readonly thenable: unique symbol
     }
     interface Console{[Symbol.toStringTag]: "Console"}
+    interface Function{[Symbol.runnable]: ()=>this}
+    interface FunctionConstructor{
+        run<returnType,argumetns extends any[],thisArg = any>(runnable: Runnable<returnType,argumetns,thisArg>,thisArg: thisArg, ...params: argumetns): returnType;
+        isRunnable(a: any): a is Runnable;
+        hasRunnable(a: any): a is {[Symbol.runnable]: ()=>any};
+    }
     interface Generator<T = unknown, TReturn = any, TNext = unknown>{readonly [Symbol.isGenerator]: true}
     interface AsyncGenerator{readonly [Symbol.isAsyncGenerator]: true, readonly [Symbol.isGenerator]: true}
     interface GeneratorFunction{isGenerator(gen: object): gen is Generator; Run(generator: any): PromiseLike<any>}
@@ -1139,7 +1375,7 @@ declare global {
         readonly unitTypes: string[]
     }
     interface Array<T>{
-        readonly randomElement: T;
+        readonly randomeElement: T;
         remove(any: T): void;
         removeAll(any: T): void;
     }

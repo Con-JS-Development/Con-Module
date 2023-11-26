@@ -1,0 +1,25 @@
+{
+  "name": "con-api",
+  "version": "0.3.1-beta",
+  "description": "A wrapper that includes many features and improves features from Script API",
+  "main": "./con-api.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Con-JS-Development/Con-Module.git"
+  },
+  "author": "ConMaster2112",
+  "license": "MIT",
+  "types": "./con-api.d.ts",
+  "bugs": {
+    "url": "https://github.com/Con-JS-Development/Con-Module/issues"
+  },
+  "homepage": "https://github.com/Con-JS-Development/Con-Module#readme",
+  "dependencies": {
+    "@minecraft/server": "^1.5.0-beta.1.20.20-preview.22",
+    "@minecraft/server-ui": "^1.2.0-beta.1.20.20-preview.22"
+  }
+}

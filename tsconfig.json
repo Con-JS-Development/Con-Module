@@ -1,12 +1,11 @@
 {
     "compilerOptions": {
-        "module": "es2020",
-        "target": "es6",
-        "lib": ["es2021"],
+        "module": "es2022",
+        "target": "ESNext",
         "moduleResolution": "node",
         "downlevelIteration": true,
         "allowJs": true,
-        "checkJs": true,
+        "checkJs": false,
         "allowSyntheticDefaultImports": true,
         "outDir": "./dist",
         "baseUrl": "./src",
@@ -18,7 +17,7 @@
             "@minecraft/server-ui"
         ]
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/","node_modules/nbt-serializer/"],
     "exclude": ["node_modules", "dist", "tasks"]
 }
   
